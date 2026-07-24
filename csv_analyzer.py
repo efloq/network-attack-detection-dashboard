@@ -74,6 +74,41 @@ def prepare_features(dataframe: pd.DataFrame, model: Any) -> pd.DataFrame:
                 f"{features.shape[1]} özellik bulundu."
             )
 
+
+    features = features.apply(
+        pd.to_numeric,
+        errors="coerce",
+    )
+
+    features = features.replace(
+        [float("inf"), float("-inf")],
+        pd.NA,
+    )
+
+    invalid_columns = (
+        features.columns[features.isna().any()]
+        .astype(str)
+        .tolist()
+    )
+
+    if invalid_columns:
+        shown_columns = ", ".join(invalid_columns[:10])
+
+        extra_count = len(invalid_columns) - 10
+        extra_text = (
+            f" ve {extra_count} sütun daha"
+            if extra_count > 0
+            else ""
+        )
+
+        raise ValueError(
+            "CSV dosyasında boş, sonsuz veya sayısal olmayan değerler bulundu: "
+            f"{shown_columns}{extra_text}. "
+            "Dosyayı temizleyip yeniden yükleyin."
+        )
+
+        
+
     return features
 
 def prediction_to_label(value: Any) -> str:
