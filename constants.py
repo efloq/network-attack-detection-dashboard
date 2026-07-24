@@ -1,6 +1,7 @@
 """Uygulama genelinde kullanılan sabitler ve açıklama metinleri."""
 
 from __future__ import annotations
+from constants import MAX_CSV_SIZE
 
 APP_TITLE = "Intelligent Network Intrusion Detection & Risk Analysis System"
 MODEL_FILE_NAME = "network_attack_detector.pkl"
@@ -224,3 +225,6 @@ DENSE_TCP_FLOW_MINIMUM = 50
 DENSE_TCP_RATIO_THRESHOLD = 0.80
 HIGH_TRANSFER_TOTAL_BYTES = 100 * 1024 * 1024
 HIGH_TRANSFER_AVERAGE_BYTES = 2 * 1024 * 1024
+# Maximum upload sizes
+MAX_CSV_SIZE = 100 * 1024 * 1024      # 100 MB
+MAX_PCAP_SIZE = 500 * 1024 * 1024     # 500 MB

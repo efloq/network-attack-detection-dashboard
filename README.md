@@ -242,6 +242,11 @@ streamlit run app.py
 | Machine Learning Analysis | `.csv` |
 | Flow-Based Analysis | `.pcap`, `.pcapng` |
 
+ **Recommended maximum file sizes**
+
+ - CSV: **100 MB**
+ - PCAP / PCAPNG: **500 MB**
+
 ---
 
 # 🚀 Future Improvements

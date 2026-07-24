@@ -667,6 +667,13 @@ def render_csv_analysis_tab() -> None:
     if uploaded_file is None:
         return
 
+    if uploaded_file.size > MAX_CSV_SIZE:
+        st.error(
+            f"CSV file exceeds the maximum supported size "
+            f"({MAX_CSV_SIZE // (1024 * 1024)} MB)."
+        )
+        return
+
     extension = Path(uploaded_file.name).suffix.lower()
     if extension != ".csv":
         st.error(
