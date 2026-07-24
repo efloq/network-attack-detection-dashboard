@@ -1,3 +1,7 @@
-[client]
-showErrorDetails = "none"
-toolbarMode = "minimal"
+[theme]
+base = "dark"
+primaryColor = "#8B5CF6"
+backgroundColor = "#111827"
+secondaryBackgroundColor = "#1F2937"
+textColor = "#F9FAFB"
+font = "sans serif"

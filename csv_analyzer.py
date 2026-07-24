@@ -108,7 +108,9 @@ def run_prediction(
         ],
         errors="ignore",
     )
+
     features = prepare_features(clean_dataframe, model)
+
     prediction = model.predict(features)
     prediction_labels = [
         prediction_to_label(value) for value in prediction
@@ -117,7 +119,47 @@ def run_prediction(
     result = clean_dataframe.copy()
     result["Tahmin"] = prediction_labels
     result["Risk Seviyesi"] = result["Tahmin"].map(RISK_MAP)
+
+    if hasattr(model, "predict_proba"):
+        probabilities = model.predict_proba(features)
+
+        confidence_scores = probabilities.max(axis=1) * 100
+        result["Güven Skoru (%)"] = confidence_scores.round(2)
+
+        if probabilities.shape[1] >= 2:
+            sorted_indices = probabilities.argsort(axis=1)
+            second_class_indices = sorted_indices[:, -2]
+
+            second_probabilities = (
+                probabilities[
+                    range(len(probabilities)),
+                    second_class_indices,
+                ]
+                * 100
+            )
+
+            model_classes = model.classes_
+
+            second_predictions = [
+                prediction_to_label(model_classes[index])
+                for index in second_class_indices
+            ]
+
+            result["İkinci Olası Sınıf"] = second_predictions
+            result["İkinci Olasılık (%)"] = second_probabilities.round(2)
+
+        result["Tahmin Güveni"] = result["Güven Skoru (%)"].apply(
+            lambda score: (
+                "Yüksek"
+                if score >= 90
+                else "Orta"
+                if score >= 70
+                else "Düşük"
+            )
+        )
+
     return result
+    
 
 def calculate_summary(result: pd.DataFrame) -> dict[str, Any]:
     """CSV raporunda kullanılan temel istatistikleri hesaplar."""
@@ -141,17 +183,44 @@ def calculate_summary(result: pd.DataFrame) -> dict[str, Any]:
         "most_common_count": most_common_count,
     }
 
-def render_metrics(summary: dict[str, Any]) -> None:
-    """CSV genel istatistiklerini üç metrik kartında gösterir."""
-    section_title("Genel İstatistikler", "01")
-    column_1, column_2, column_3 = st.columns(3)
+def render_metrics(
+        
+    summary: dict[str, Any],
+    result: pd.DataFrame,
+) -> None:
+    """CSV genel istatistiklerini metrik kartlarında gösterir."""
 
-    column_1.metric("Toplam Kayıt", summary["total_records"])
+    section_title("Genel İstatistikler", "01")
+
+    column_1, column_2, column_3, column_4 = st.columns(4)
+
+    column_1.metric(
+        "Toplam Kayıt",
+        summary["total_records"],
+    )
+
     column_2.metric(
         "Tespit Edilen Tür Sayısı",
         summary["detected_type_count"],
     )
-    column_3.metric("Kritik Risk Sayısı", summary["critical_count"])
+
+    column_3.metric(
+        "Kritik Risk Sayısı",
+        summary["critical_count"],
+    )
+
+    if "Güven Skoru (%)" in result.columns:
+        average_confidence = result["Güven Skoru (%)"].mean()
+
+        column_4.metric(
+            "Ortalama Güven",
+            f"%{average_confidence:.2f}",
+        )
+    else:
+        column_4.metric(
+            "Ortalama Güven",
+            "-",
+        )
 
 def render_most_common_attack(summary: dict[str, Any]) -> None:
     """Benign hariç en sık tespit edilen saldırıyı gösterir."""
@@ -265,22 +334,88 @@ def render_charts(result: pd.DataFrame) -> None:
         plt.close(risk_figure)
 
 def render_result_table(result: pd.DataFrame) -> None:
-    """Tüm CSV tahmin sonuçlarını gösterir."""
+    """CSV tahmin sonuçlarını gösterir."""
+
     section_title("Tahmin Sonuçları", "03")
+
+    summary_columns = [
+        "Tahmin",
+        "Risk Seviyesi",
+        "Güven Skoru (%)",
+        "Tahmin Güveni",
+        "İkinci Olası Sınıf",
+        "İkinci Olasılık (%)",
+    ]
+
+    available_columns = [
+        column
+        for column in summary_columns
+        if column in result.columns
+    ]
+
+    display_result = result.copy()
+
+    risk_badge_map = {
+        "Kritik": "🔴 Kritik",
+        "Yüksek": "🟠 Yüksek",
+        "Orta": "🟡 Orta",
+        "Düşük": "🟢 Düşük",
+    }
+
+    display_result["Risk Seviyesi"] = (
+        display_result["Risk Seviyesi"]
+        .map(risk_badge_map)
+        .fillna(display_result["Risk Seviyesi"])
+    )
+
     st.dataframe(
-        result,
+        display_result[available_columns],
         use_container_width=True,
         hide_index=True,
         height=430,
-    )
+    )   
 
+    with st.expander("Tüm analiz sonuçlarını göster"):
+        st.dataframe(
+            result,
+            use_container_width=True,
+            hide_index=True,
+        )
 def render_risk_table(result: pd.DataFrame) -> None:
     """Tahmin ve risk seviyelerini ayrı bir tabloda gösterir."""
+
     section_title("Risk Analizi Tablosu", "05")
-    risk_table = result.loc[:, ["Tahmin", "Risk Seviyesi"]]
+
+    risk_table = result.copy()
+
+    risk_badge_map = {
+        "Kritik": "🔴 Kritik",
+        "Yüksek": "🟠 Yüksek",
+        "Orta": "🟡 Orta",
+        "Düşük": "🟢 Düşük",
+    }
+
+    risk_table["Risk Seviyesi"] = (
+        risk_table["Risk Seviyesi"]
+        .map(risk_badge_map)
+        .fillna(risk_table["Risk Seviyesi"])
+    )
+
+    columns = [
+        "Tahmin",
+        "Risk Seviyesi",
+        "Güven Skoru (%)",
+        "Tahmin Güveni",
+    ]
+
+    available_columns = [
+        column
+        for column in columns
+        if column in risk_table.columns
+    ]
 
     st.dataframe(
-        risk_table,
+        risk_table[available_columns],
         use_container_width=True,
         hide_index=True,
         height=360,
@@ -453,6 +588,7 @@ def clear_csv_analysis_state() -> None:
         st.session_state.pop(key, None)
 
 def render_csv_analysis_tab() -> None:
+
     """Mevcut Random Forest tabanlı CSV analiz akışını çalıştırır."""
     section_title("CSV Analizi", "CSV")
     st.markdown(
@@ -564,7 +700,17 @@ def render_csv_analysis_tab() -> None:
 
     try:
         summary = calculate_summary(result)
-        render_metrics(summary)
+        render_metrics(summary,result)
+        if "Güven Skoru (%)" in result.columns:
+            low_confidence = int(
+            (result["Güven Skoru (%)"] < 70).sum()
+            )
+
+        if low_confidence > 0:
+            st.warning(
+                f"⚠️ {low_confidence} kaydın güven skoru %70'in altında. "
+                "Bu kayıtların manuel incelenmesi önerilir."
+             )
         render_most_common_attack(summary)
         render_result_table(result)
         render_charts(result)
