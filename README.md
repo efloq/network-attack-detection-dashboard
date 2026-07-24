@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🛡️ Network Attack Detection Dashboard
+# 🛡️ Intelligent Network Intrusion Detection & Risk Analysis System
 
-### Machine Learning & Flow-Based Network Traffic Analysis
+### Machine Learning-Based Attack Classification & NFStream-Powered Flow Analysis
 
 A modern cybersecurity dashboard that combines **Machine Learning** and **Flow-Based Network Analysis** to detect suspicious network activities from CSV datasets and PCAP files.
 
@@ -18,27 +18,27 @@ A modern cybersecurity dashboard that combines **Machine Learning** and **Flow-B
 
 # 📌 Overview
 
-Network Attack Detection Dashboard is a cybersecurity analysis platform developed during the **Microsoft AI Innovators Internship Program**.
+The **Intelligent Network Intrusion Detection & Risk Analysis System** is a cybersecurity analysis platform developed during the **Microsoft AI Innovators Internship Program**.
 
-The application provides two independent analysis modules:
+The system combines machine learning and flow-based traffic analysis to identify suspicious network activities and assess potential security risks.
 
-- 🤖 **CSV Analysis** using a trained Random Forest model on the CICIDS2017 dataset.
-- 🌐 **PCAP Analysis** using NFStream to extract network flows and perform rule-based security assessment.
+It provides two complementary analysis modules:
 
-The dashboard presents attack predictions, confidence scores, visual analytics and downloadable reports through an interactive Streamlit interface.
+- 🤖 **Machine Learning-Based CSV Analysis** using a trained Random Forest model on the CICIDS2017 dataset.
+- 🌐 **Flow-Based PCAP Analysis** using NFStream to extract network flows and perform explainable rule-based security assessment.
+
+The dashboard provides attack predictions, model probability scores, interactive visualizations and downloadable reports through an intuitive Streamlit interface.
 
 ---
 
 # ✨ Features
 
-
-```markdown
-> **Note:** PCAP analysis performs rule-based traffic assessment and does not use machine learning classification.
+> **Note:** The PCAP module performs **rule-based traffic assessment** and **does not** use machine learning classification.
 
 ## 🤖 Machine Learning Analysis
 
-- Random Forest attack detection
-- CICIDS2017 support
+- Random Forest attack classification
+- CICIDS2017 dataset support
 - 77 network traffic features
 - 15 attack classes
 - Model Probability Score
@@ -94,55 +94,54 @@ The dashboard presents attack predictions, confidence scores, visual analytics a
 
 | Category | Technologies |
 |----------|--------------|
-| Language | Python |
-| Interface | Streamlit |
+| Programming Language | Python |
+| User Interface | Streamlit |
 | Machine Learning | Scikit-learn |
-| Model | Random Forest |
-| Network Analysis | NFStream |
+| Classification Model | Random Forest |
+| Network Flow Analysis | NFStream |
 | Data Processing | Pandas |
 | Visualization | Matplotlib |
 
 ---
 
-
-
-## 🏗️ Architecture
+# 🏗️ System Architecture
 
 ```text
-CSV
-   │
-   ▼
-Feature Validation
-   │
-   ▼
-Random Forest
-   │
-   ▼
-Risk Assessment
-   │
-   ▼
-Dashboard
+                    CSV FILE
+                       │
+                       ▼
+             Feature Validation
+                       │
+                       ▼
+               Random Forest Model
+                       │
+                       ▼
+      Attack Classification & Risk Analysis
+                       │
+                       ▼
+                  Streamlit Dashboard
 
 
-PCAP
-   │
-   ▼
-NFStream
-   │
-   ▼
-Flow Extraction
-   │
-   ▼
-Rule-Based Security Assessment
-   │
-   ▼
-Dashboard
+                 PCAP / PCAPNG FILE
+                       │
+                       ▼
+                    NFStream
+                       │
+                       ▼
+               Flow Extraction
+                       │
+                       ▼
+      Rule-Based Security Assessment
+                       │
+                       ▼
+                  Streamlit Dashboard
+```
 
 ---
 
-## 📊 Model Performance
+# 📊 Model Performance
 
-The Random Forest model was evaluated on a stratified test set containing **462,762 network flows**.
+The Random Forest model was evaluated on a **stratified test set containing 462,762 network flows**.
 
 ### Overall Performance
 
@@ -151,8 +150,8 @@ The Random Forest model was evaluated on a stratified test set containing **462,
 | Accuracy | **99.85%** |
 | Macro Precision | **92.50%** |
 | Macro Recall | **83.83%** |
-| Macro F1 | **86.39%** |
-| Weighted F1 | **99.85%** |
+| Macro F1-Score | **86.39%** |
+| Weighted F1-Score | **99.85%** |
 
 ### Class-wise Performance
 
@@ -170,28 +169,28 @@ The Random Forest model was evaluated on a stratified test set containing **462,
 | Web Attack Brute Force | 74.67% | 77.21% | 75.92% |
 | Web Attack XSS | 43.01% | 30.77% | 35.87% |
 
-> **Note:** Rare attack classes such as Heartbleed, SQL Injection and Infiltration contain very few samples. Therefore, their reported metrics may not be statistically representative.
+> **Note:** Rare attack classes such as **Heartbleed**, **SQL Injection**, and **Infiltration** contain very few samples. Therefore, their reported metrics should be interpreted cautiously.
 
+---
 
+# ⚠️ Dataset Limitations
 
-## ⚠️ Dataset Limitations
-
-The model was trained on the **CICIDS2017** dataset, which is highly imbalanced. While common attack categories contain tens or hundreds of thousands of samples, some attack types include only a handful of instances.
+The model was trained using the **CICIDS2017** dataset, which is highly imbalanced. While common attack categories contain hundreds of thousands of samples, several attack classes contain only a handful of instances.
 
 Because of this imbalance:
 
-- Accuracy alone is not sufficient to evaluate the model.
-- Macro F1 is reported alongside Accuracy and Weighted F1.
-- Rare attack classes may exhibit lower recall despite the high overall accuracy.
+- Accuracy alone is not sufficient to evaluate model performance.
+- Macro F1-Score is reported alongside Accuracy and Weighted F1-Score.
+- Minority attack classes may have lower recall despite the high overall accuracy.
 
-The PCAP analysis module is **rule-based** and does **not** perform machine learning classification. It identifies suspicious network behaviors (e.g., port scanning or unusually high TCP activity) using heuristic rules extracted from NFStream flow statistics.
+The PCAP analysis module performs **rule-based traffic assessment** and **does not** classify attack types using machine learning. Instead, it identifies suspicious network behaviors such as port scanning or unusually high TCP activity using heuristic rules derived from NFStream flow statistics.
 
-
+---
 
 # 📂 Project Structure
 
 ```text
-network-attack-detection-dashboard
+intelligent-network-intrusion-detection-risk-analysis-system
 │
 ├── app.py
 ├── csv_analyzer.py
@@ -203,6 +202,8 @@ network-attack-detection-dashboard
 ├── label_encoder.pkl
 ├── requirements.txt
 ├── LICENSE
+├── notebooks/
+│   └── Network_Attack_Detection_Training.ipynb
 └── screenshots/
     ├── dashboard.png
     ├── csv-analysis.png
@@ -215,9 +216,9 @@ network-attack-detection-dashboard
 # 🚀 Installation
 
 ```bash
-git clone https://github.com/efloq/network-attack-detection-dashboard.git
+git clone https://github.com/efloq/intelligent-network-intrusion-detection-risk-analysis-system.git
 
-cd network-attack-detection-dashboard
+cd intelligent-network-intrusion-detection-risk-analysis-system
 
 python -m venv venv
 
@@ -234,20 +235,12 @@ streamlit run app.py
 
 ---
 
-# 📊 Supported Files
+# 📊 Supported File Formats
 
-| Analysis | Format |
-|----------|--------|
+| Module | Supported Format |
+|--------|------------------|
 | Machine Learning Analysis | `.csv` |
-| Network Flow Analysis | `.pcap`, `.pcapng` |
-
----
-
-# 👩‍💻 Developer
-
-**Elifnur Sertkaya**
-
-Microsoft AI Innovators Internship Project
+| Flow-Based Analysis | `.pcap`, `.pcapng` |
 
 ---
 
@@ -255,13 +248,26 @@ Microsoft AI Innovators Internship Project
 
 - Real-time packet capture
 - Threat intelligence integration (AbuseIPDB / VirusTotal)
-- Automated unit tests
-- Model calibration
-- Live monitoring support
+- Automatic model calibration
+- Unit and integration tests
+- Live network monitoring
+- Docker deployment
+- REST API support
+- User authentication
+- Explainable AI (XAI) support
+
+---
+
+# 👩‍💻 Developer
+
+**Elifnur Sertkaya**
+
+Computer Engineering Student
+
+Microsoft AI Innovators Internship Project
 
 ---
 
 # 📄 License
 
 This project is licensed under the **MIT License**.
-
