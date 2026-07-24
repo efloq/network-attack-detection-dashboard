@@ -495,9 +495,24 @@ def render_security_assessment(
     """Rule-based PCAP bulgularını açıklayıcı bilgi kutularında gösterir."""
     section_title("Güvenlik Değerlendirmesi", "03")
     st.info(
-        "Bu bölümdeki bulgular makine öğrenmesi tahmini değildir. Yalnızca "
-        "Flow istatistiklerine uygulanan basit eşik kurallarıyla kullanıcıyı "
-        "bilgilendirmek amacıyla üretilir."
+    """
+    ### 📡 PCAP Flow Analysis & Security Assessment
+
+    Bu modül **Makine Öğrenmesi modeli çalıştırmaz**.
+    Analizler NFStream tarafından çıkarılan ağ akışları üzerinde
+    uygulanan kural tabanlı güvenlik değerlendirmelerine dayanır.       
+
+    PCAP dosyası **NFStream** ile ağ akışlarına (network flows) dönüştürülür ve aşağıdaki analizler gerçekleştirilir:
+
+    - 📊 Flow Statistics
+    - 🌐 Protocol Distribution
+    - 🔌 Port Analysis
+    - 🖥️ IP Analysis
+    - 🛡️ Rule-Based Security Assessment
+
+    > **Not:** Bu bölümdeki sonuçlar saldırı sınıflandırması değil,
+    flow istatistiklerinden elde edilen olası güvenlik bulgularıdır.
+    """
     )
 
     if not findings:
@@ -708,7 +723,7 @@ def render_flow_table(flow_dataframe: pd.DataFrame) -> pd.DataFrame:
     return filtered
 
 def top_talkers(flow_dataframe: pd.DataFrame) -> pd.Series:
-    """Rapor için en çok Flow'a katılan IP adreslerini hesaplar."""
+    """Rapor için en çok Flowa katılan IP adreslerini hesaplar."""
     series_list = []
     for column in ("src_ip", "dst_ip"):
         if column in flow_dataframe.columns:
@@ -726,7 +741,7 @@ def build_pcap_report(
     file_name: str,
     analysis_time: str,
 ) -> pd.DataFrame:
-    """PCAP özetini, en sık değerleri ve güvenlik bulgularını CSV'ye hazırlar."""
+    """PCAP özetini, en sık değerleri ve güvenlik bulgularını CSVye hazırlar."""
     rows: list[dict[str, str]] = [
         {"Bölüm": "Dosya", "Metrik": "Dosya Adı", "Değer": file_name},
         {
