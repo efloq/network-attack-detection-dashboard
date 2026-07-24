@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-APP_TITLE = "Makine Öğrenmesi Tabanlı Ağ Saldırı Tespit Sistemi"
+APP_TITLE = "Intelligent Network Intrusion Detection & Risk Analysis System"
 MODEL_FILE_NAME = "network_attack_detector.pkl"
 RESULT_COLUMNS = ("Tahmin", "Risk Seviyesi")
 
