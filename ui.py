@@ -882,6 +882,25 @@ button[role="radio"][aria-checked="true"] {
 div[data-testid="stMetric"]{
     animation: fadeUp .5s ease;
 }
+
+/* Genel değerlendirme kartı yazı kontrastı */
+.evaluation-card,
+.evaluation-card p,
+.evaluation-card span,
+.evaluation-card div,
+.evaluation-card strong {
+    color: #F9FAFB !important;
+    opacity: 1 !important;
+    -webkit-text-fill-color: #F9FAFB !important;
+}
+
+.evaluation-card {
+    background: rgba(31, 41, 55, 0.72) !important;
+    border: 1px solid rgba(196, 181, 253, 0.22) !important;
+    border-left: 5px solid #8B5CF6 !important;
+}
+
+
         </style>
         """,
         unsafe_allow_html=True,
